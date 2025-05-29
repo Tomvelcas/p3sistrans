@@ -1,18 +1,27 @@
 package uniandes.edu.co.epsandes.controller;
 
-import uniandes.edu.co.epsandes.modelo.OrdenDeServicio;
-import uniandes.edu.co.epsandes.servicio.OrdenDeServicioService;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Collections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import uniandes.edu.co.epsandes.modelo.OrdenDeServicio;
+import uniandes.edu.co.epsandes.servicio.OrdenDeServicioService;
 
 @RestController
 @RequestMapping("/api/ordenes")
@@ -24,25 +33,30 @@ public class OrdenDeServicioController {
     private OrdenDeServicioService ordenService;
 
     // RF6 - Registrar una orden de servicio
-    @PostMapping
+   @PostMapping
     public ResponseEntity<?> registrarOrden(@RequestBody OrdenDeServicio orden) {
-        logger.debug("POST /api/ordenes - Body: {}", orden);
-        try {            OrdenDeServicio nuevaOrden = ordenService.registrarOrden(orden);
-            // Create a simplified response
-            Map<String, Object> response = new HashMap<>();
-            response.put("idOrden", nuevaOrden.getIdOrden());
-            response.put("estadoOrden", nuevaOrden.getEstadoOrden());
-            response.put("fechaHora", nuevaOrden.getFechaHora());
-            response.put("medicoId", nuevaOrden.getMedicoNumeroDocumento());
-            response.put("afiliadoId", nuevaOrden.getAfiliadoNumeroDocumento());
-            
-            logger.info("Orden de servicio creada: {}", nuevaOrden);
-            return new ResponseEntity<>(response, HttpStatus.CREATED);
-        } catch (RuntimeException e) {
-            logger.error("Error al registrar orden de servicio: {}", e.getMessage(), e);
-            return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
-        }
+    logger.debug("POST /api/ordenes - Body: {}", orden);
+    try {
+        // IMPORTANTE: si estás generando el ID desde la base de datos, ignora el idOrden del JSON
+        orden.setIdOrden(null); // Garantiza que no haya ID previo para forzar inserción nueva
+
+        OrdenDeServicio nuevaOrden = ordenService.registrarOrden(orden);
+        Map<String, Object> response = new HashMap<>();
+        response.put("idOrden", nuevaOrden.getIdOrden());
+        response.put("fechaHora", nuevaOrden.getFechaHora());
+        response.put("estadoOrden", nuevaOrden.getEstadoOrden());
+        response.put("medicoNumeroDocumento", nuevaOrden.getMedicoNumeroDocumento());
+        response.put("afiliadoNumeroDocumento", nuevaOrden.getAfiliadoNumeroDocumento());
+        response.put("serviciosIds", nuevaOrden.getServiciosIds());
+
+        logger.info("Orden de servicio creada: {}", nuevaOrden);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    } catch (RuntimeException e) {
+        logger.error("Error al registrar orden de servicio: {}", e.getMessage(), e);
+        return ResponseEntity.badRequest().body(Collections.singletonMap("error", e.getMessage()));
     }
+}
+
 
     // Asignar servicios a una orden
     @PostMapping("/{ordenId}/servicios")

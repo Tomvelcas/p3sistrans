@@ -1,19 +1,22 @@
 package uniandes.edu.co.epsandes.servicio;
 
-import uniandes.edu.co.epsandes.modelo.Afiliado;
-import uniandes.edu.co.epsandes.modelo.Medico;
-import uniandes.edu.co.epsandes.modelo.OrdenDeServicio;
-import uniandes.edu.co.epsandes.modelo.ServicioDeSalud;
-import uniandes.edu.co.epsandes.repositorio.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import uniandes.edu.co.epsandes.modelo.Afiliado;
+import uniandes.edu.co.epsandes.modelo.Medico;
+import uniandes.edu.co.epsandes.modelo.OrdenDeServicio;
+import uniandes.edu.co.epsandes.modelo.ServicioDeSalud;
+import uniandes.edu.co.epsandes.repositorio.AfiliadoRepository;
+import uniandes.edu.co.epsandes.repositorio.MedicoRepository;
+import uniandes.edu.co.epsandes.repositorio.OrdenDeServicioRepository;
+import uniandes.edu.co.epsandes.repositorio.ServicioDeSaludRepository;
 
 @Service
 public class OrdenDeServicioService {
@@ -33,11 +36,10 @@ public class OrdenDeServicioService {
     private ServicioDeSaludRepository servicioRepository;    // RF6 - Registrar una orden de servicio
     public OrdenDeServicio registrarOrden(OrdenDeServicio orden) {
         logger.debug("Intentando registrar OrdenDeServicio: {}", orden);
-        // Verificar si ya existe una orden con el mismo ID
-        if (ordenRepository.existsById(orden.getIdOrden())) {
-            logger.warn("Ya existe una orden con el ID: {}", orden.getIdOrden());
-            throw new RuntimeException("Ya existe una orden con el ID: " + orden.getIdOrden());
-        }
+
+         if (orden.getIdOrden() == null) {
+        orden.setIdOrden(System.currentTimeMillis()); 
+    }
 
         // Verificar que el médico existe
         Medico medico = medicoRepository.findById(orden.getMedicoNumeroDocumento())

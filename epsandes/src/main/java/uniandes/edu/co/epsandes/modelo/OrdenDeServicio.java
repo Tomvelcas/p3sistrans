@@ -1,11 +1,13 @@
 package uniandes.edu.co.epsandes.modelo;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Document(collection = "ordenes_servicio")
@@ -32,7 +34,9 @@ public class OrdenDeServicio {
     private List<Long> serviciosIds = new ArrayList<>();
 
     // Constructor vacío
-    public OrdenDeServicio() {}    // Constructor con parámetros
+    public OrdenDeServicio() {}
+
+    // Constructor con parámetros
     public OrdenDeServicio(Long idOrden, LocalDateTime fechaHora, String estadoOrden,
                           Long medicoNumeroDocumento, Long afiliadoNumeroDocumento) {
         this.idOrden = idOrden;

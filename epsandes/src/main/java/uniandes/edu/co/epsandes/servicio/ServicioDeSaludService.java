@@ -1,15 +1,16 @@
 package uniandes.edu.co.epsandes.servicio;
+import java.util.List;
+import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import uniandes.edu.co.epsandes.modelo.IPS;
 import uniandes.edu.co.epsandes.modelo.ServicioDeSalud;
 import uniandes.edu.co.epsandes.repositorio.IPSRepository;
 import uniandes.edu.co.epsandes.repositorio.ServicioDeSaludRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ServicioDeSaludService {
@@ -88,5 +89,10 @@ public class ServicioDeSaludService {
         // requiere aggregation queries en MongoDB
         logger.warn("Método obtenerServiciosMasSolicitados no completamente implementado para MongoDB");
         return servicioRepository.findAll();
+    }
+    //Consukltar disponibilidad de un servicio 
+    public boolean consultarDisponibilidadServicio(Long servicioId, String fecha) {
+        
+        return true;
     }
 }
